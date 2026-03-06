@@ -29,12 +29,14 @@
  */
 export function maskAadhaar(aadhaarNumber) {
   // Your code here
-  if(typeof aadhaarNumber !== 'string' || aadhaarNumber.length!== 12 || !(/^[0-9]+$/.test(aadhaarNumber))) return "INVALID";
-
-  const toMasked1 = 'X'.repeat(aadhaarNumber.slice(0,4).length);
-  const toMasked2 = 'X'.repeat(aadhaarNumber.slice(4,8).length);
-  const toMasked3 = aadhaarNumber.slice(8,12);
-
-  let arr = [toMasked1,toMasked2,toMasked3];
-  return arr.join("-");
+  if (typeof aadhaarNumber !== "string") return "INVALID";
+  const pattern = /^\d{12}$/;
+  const digits = pattern.test(aadhaarNumber);
+  if (digits) {
+    const visible = aadhaarNumber.slice(8);
+    const masked1 = "X".repeat(4);
+    const masked2 = "X".repeat(4);
+    return masked1 + "-" + masked2 + "-" + visible;
+  }
+  return "INVALID";
 }

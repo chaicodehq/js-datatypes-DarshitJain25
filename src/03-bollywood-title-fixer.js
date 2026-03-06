@@ -31,30 +31,34 @@
  */
 export function fixBollywoodTitle(title) {
   // Your code here
-  if (typeof title !== "string" || title.trim() === "") return "";
-  title = title.trim();
-  const removespacing = title.replace(/\s+/g, " ");
-  const spliting = removespacing.split(" ");
+  if (typeof title !== "string") return "";
+  let trimmedTitle = title.trim();
+  if (trimmedTitle === "") return "";
 
-  const casing = spliting.map((str, index) => {
-    str = str.toLowerCase();
+  trimmedTitle = trimmedTitle.replace(/\s+/g, " ");
+  const titleArray = trimmedTitle.split(" ");
+  let index = 0;
+  const modified = titleArray.map((it) => {
     if (
-      index != 0 &&
-      (str.slice(0) === "ka" ||
-        str.slice(0) === "ki" ||
-        str.slice(0) === "ke" ||
-        str.slice(0) === "se" ||
-        str.slice(0) === "aur" ||
-        str.slice(0) === "ya" ||
-        str.slice(0) === "the" ||
-        str.slice(0) === "of" ||
-        str.slice(0) === "in" ||
-        str.slice(0) === "a" ||
-        str.slice(0) === "an")
+      index !== 0 &&
+      (it === "ka" ||
+        it === "ki" ||
+        it === "ke" ||
+        it === "se" ||
+        it === "aur" ||
+        it === "ya" ||
+        it === "the" ||
+        it === "of" ||
+        it === "in" ||
+        it === "a" ||
+        it === "an")
     ) {
-      return str;
+      it = it.toLowerCase();
+    } else {
+      it = it.charAt(0).toUpperCase() + it.slice(1).toLowerCase();
     }
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    index++;
+    return it;
   });
-  return casing.join(" ");
+  return `${modified.join(" ")}`;
 }

@@ -40,4 +40,48 @@
  */
 export function parseWhatsAppMessage(message) {
   // Your code here
+  if (typeof message !== "string") return null;
+  if (!message.includes(" - ") || !message.includes(": ")) return null;
+
+  const commaSpace = message.indexOf(",");
+  const date = message.slice(0, commaSpace);
+  const hyphenSpace = message.indexOf("-", 10);
+  const time = message.slice(commaSpace + 2, hyphenSpace - 1);
+  const colonSpace = message.indexOf(": ", hyphenSpace);
+  const sender = message.slice(hyphenSpace + 2, colonSpace);
+  const text = message.slice(colonSpace + 1).trim();
+  const trimmedText = text.split(" ").filter((x) => x.trim() !== "");
+  const lowCaseText = trimmedText.map((x) => x.toLowerCase());
+
+  let sentiment = "";
+  if (
+    ((lowCaseText.includes("😂") ||
+      lowCaseText.includes(":)") ||
+      lowCaseText.includes("haha")) &&
+      (lowCaseText.includes("❤") ||
+        lowCaseText.includes("love") ||
+        lowCaseText.includes("pyaar"))) ||
+    lowCaseText.includes("😂") ||
+    lowCaseText.includes(":)") ||
+    lowCaseText.includes("haha")
+  ) {
+    sentiment = "funny";
+  } else if (
+    lowCaseText.includes("❤") ||
+    lowCaseText.includes("love") ||
+    lowCaseText.includes("pyaar")
+  ) {
+    sentiment = "love";
+  } else {
+    sentiment = "neutral";
+  }
+
+  return {
+    date: date,
+    time: time,
+    sender: sender,
+    text: text,
+    wordCount: trimmedText.length,
+    sentiment: sentiment,
+  };
 }

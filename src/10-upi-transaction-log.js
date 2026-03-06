@@ -48,4 +48,74 @@
  */
 export function analyzeUPITransactions(transactions) {
   // Your code here
+  if (!Array.isArray(transactions) || transactions.length === 0) return null;
+
+  const validTransaction = transactions.filter(
+    ({ type, amount }) => amount > 0 && (type === "credit" || type === "debit"),
+  );
+
+  if (!validTransaction.length) return null;
+  const totalCredit = validTransaction.reduce((accm, x) => {
+    if (x.type === "credit") {
+      return accm + x.amount;
+    }
+    return accm;
+  }, 0);
+  const totalDebit = validTransaction.reduce((accm, x) => {
+    if (x.type === "debit") {
+      return accm + x.amount;
+    }
+    return accm;
+  }, 0);
+
+  const netBal = totalCredit - totalDebit;
+  const totalTransactions = validTransaction.length;
+  const totalTrxSum = validTransaction.reduce(
+    (total, x) => total + x.amount,
+    0,
+  );
+  const avgTrx = Math.round(totalTrxSum / totalTransactions);
+  const amt = validTransaction.map((x) => x.amount);
+  const maxAmt = Math.max(...amt);
+  const highestTransaction = validTransaction.find((x) => x.amount === maxAmt);
+  const allAbove100 = validTransaction.every((x) => x.amount > 100);
+  const hasLargeTransaction = validTransaction.some((y) => y.amount >= 5000);
+  const categoryBreakdown = validTransaction.reduce((accm, x) => {
+    if (!accm[x.category]) {
+      accm[x.category] = 0;
+    }
+    accm[x.category] += x.amount;
+    return accm;
+  }, {});
+  const frequentContact = validTransaction.reduce((accm, x) => {
+    if (!accm[x.to]) {
+      accm[x.to] = 0;
+    }
+    accm[x.to]++;
+    return accm;
+  }, {});
+  const frequent = Math.max(...Object.values(frequentContact));
+  const arrayOfFrequent = Object.entries(frequentContact).filter(
+    ([, value]) => value === frequent,
+  );
+  const toFrequency = arrayOfFrequent.sort((a, b) => {
+    if (a[0] < b[0]) return -1;
+    else if (a[0] > b[0]) return 1;
+    else return 0;
+  });
+
+  const maxToFrequency = toFrequency[0][0];
+
+  return {
+    totalCredit: totalCredit,
+    totalDebit: totalDebit,
+    netBalance: netBal,
+    transactionCount: totalTransactions,
+    avgTransaction: avgTrx,
+    highestTransaction: highestTransaction,
+    categoryBreakdown: categoryBreakdown,
+    frequentContact: maxToFrequency,
+    allAbove100: allAbove100,
+    hasLargeTransaction: hasLargeTransaction,
+  };
 }

@@ -18,7 +18,7 @@
  *   - Calculate: totalAmount = amount + gstAmount
  *   - Round gstAmount aur totalAmount to 2 decimal places using
  *     parseFloat(value.toFixed(2))
- *   - Return object: { baseAmount, gstRate, gstAmount, totalAmount }
+ *   - Return o/bject: { baseAmount, gstRate, gstAmount, totalAmount }
  *   - category ko lowercase mein compare karo (case-insensitive)
  *   - Hint: Use toFixed(), parseFloat(), Number.isFinite(), toLowerCase()
  *
@@ -40,4 +40,42 @@
  */
 export function calculateGST(amount, category) {
   // Your code here
+  if (!(Number.isFinite(amount) && amount > 0) || typeof category !== "string")
+    return null;
+
+  category = category.toLowerCase();
+  if (
+    category === "essential" ||
+    category === "food" ||
+    category === "standard" ||
+    category === "electronics" ||
+    category === "luxury"
+  ) {
+    let rate;
+
+    if (category === "essential") {
+      rate = 0;
+    } else if (category === "food") {
+      rate = 5;
+    } else if (category === "standard") {
+      rate = 12;
+    } else if (category === "electronics") {
+      rate = 18;
+    } else if (category === "luxury") {
+      rate = 28;
+    }
+    let gstAmt, toalAmt;
+    gstAmt = amount * (rate / 100);
+    gstAmt = parseFloat(gstAmt.toFixed(2));
+    toalAmt = amount + gstAmt;
+    toalAmt = parseFloat(toalAmt.toFixed(2));
+    return {
+      baseAmount: amount,
+      gstRate: rate,
+      gstAmount: gstAmt,
+      totalAmount: toalAmt,
+    };
+  } else {
+    return null;
+  }
 }

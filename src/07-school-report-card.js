@@ -42,4 +42,70 @@
  */
 export function generateReportCard(student) {
   // Your code here
+  if (!student || typeof student !== "object") return null;
+  if (typeof student.name !== "string" || student.name === "" || !student.name)
+    return null;
+  if (
+    !student.marks ||
+    typeof student.marks !== "object" ||
+    Object.keys(student.marks).length === 0
+  )
+    return null;
+  const score = Object.values(student.marks);
+  if (score.some((ele) => typeof ele !== "number" || ele < 0 || ele > 100))
+    return null;
+  const totalMarks = Object.values(score).reduce((sum, it) => sum + it, 0);
+
+  const percentage = parseFloat(
+    ((totalMarks / (score.length * 100)) * 100).toFixed(2),
+  );
+
+  const subWithMarks = Object.entries(student.marks);
+
+  const minimumMarks = Math.min(...score);
+  const maximumMarks = Math.max(...score);
+  // const highestSubjectWithMarks = subWithMarks.filter((it) =>
+  //   it.includes(Math.max(...score)),
+  // ); // Here ,using Math.max(...score) inside filter makes it run for each element iteration again and again
+  const highestSubjectWithMarks = subWithMarks.filter((it) =>
+    it.includes(maximumMarks),
+  ); // Here ,using Math.max(...score) inside filter makes it run for each element iteration again and again
+  const highestSubject = highestSubjectWithMarks[0]?.[0]; // check for empty array returned by filter
+
+  // const lowestSubjectWithMarks = subWithMarks.filter((it) =>
+  //   it.includes(Math.min(...score)),
+  // ); // Here ,using Math.min(...score) inside filter makes it run for each element iteration again and again
+
+  const lowestSubjectWithMarks = subWithMarks.filter((it) =>
+    it.includes(minimumMarks),
+  );
+  const lowestSubject = lowestSubjectWithMarks[0]?.[0]; // check for empty returned by filter
+  const passedSubjects = subWithMarks
+    .filter((x) => x[1] >= 40)
+    .map((i) => i[0]);
+  const failedSubjects = subWithMarks.filter((x) => x[1] < 40).map((i) => i[0]);
+  const subjectCount = score.length;
+
+  const grading = [
+    { requiredPercentage: 90, grade: "A+" },
+    { requiredPercentage: 80, grade: "A" },
+    { requiredPercentage: 70, grade: "B" },
+    { requiredPercentage: 60, grade: "C" },
+    { requiredPercentage: 40, grade: "D" },
+    { requiredPercentage: 0, grade: "F" },
+  ];
+
+  const grades = grading.find((x) => percentage >= x.requiredPercentage).grade;
+
+  return {
+    name: student.name,
+    totalMarks: totalMarks,
+    percentage: percentage,
+    grade: grades,
+    highestSubject: highestSubject,
+    lowestSubject: lowestSubject,
+    passedSubjects: passedSubjects,
+    failedSubjects: failedSubjects,
+    subjectCount: subjectCount,
+  };
 }
